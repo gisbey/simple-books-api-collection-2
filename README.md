@@ -103,6 +103,7 @@ Store the token in the `accessToken` collection variable so all requests can ref
 | `bookId`       | ID of the book to order (set automatically by tests)                       | `1`                                    |
 | `orderId`      | ID of the created order (set automatically by tests)                       | `PF6MflPDcuhWobZcgmJy5`                |
 | `customerName` | Name of the customer placing the order (set automatically by tests)        | `John Doe`                             |
+| `email`        | Email used to register API client (set automatically by tests)             | `John.Doe@example.com`                 |
 
 > Variables marked as "set automatically by tests" are populated by the test scripts in earlier requests — no manual input needed when running the full collection in order.
 
