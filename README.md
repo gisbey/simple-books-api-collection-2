@@ -171,7 +171,7 @@ GET {{baseUrl}}/books?type=non-fiction
 
 **Tests:** 
 - Asserts the response status code is `200 OK`.
-- Finds the first available non-fiction book and saves its `id` to the `{{bookId}}` collection variable.
+- Finds the first available non-fiction book and saves its `id` to the `bookId` collection variable.
 
 ---
 
@@ -212,7 +212,7 @@ GET {{baseUrl}}/books/:bookId
 
 **Tests:** 
 - Asserts the response status code is `200 OK`.
-- Verifies the returned available non-fiction book matches the `name` from the previous test.
+- Verifies the returned available non-fiction book has the correct `name`.
 
 ---
 
@@ -220,7 +220,7 @@ GET {{baseUrl}}/books/:bookId
 
 > ⚠️ All order endpoints require the `Authorization: Bearer {{accessToken}}` header.
 
-#### `POST /orders` — Place an Order
+#### `POST /orders` — Place Order
 
 Creates a new book order under a random name.
 
@@ -247,7 +247,7 @@ Content-Type: application/json
 **Tests:** 
 - Asserts the response status code is `201 Created`.
 - Verifies that `created` is true.
-- Saves the returned `orderId` to the `{{orderId}}` collection variable.
+- Saves the returned `orderId` to the `orderId` collection variable.
 
 ---
 
@@ -277,11 +277,11 @@ Authorization: Bearer {{accessToken}}
 **Tests:** 
 - Asserts the response status code is `200 OK`.
 - Verifies the `orderID` of the recently placed order and that the `quantity` ordered was 1.
-- Adds the `customerName` from the order to the `{{customerOrder}}` collection variable.
+- Adds the `customerName` from the order to the `customerOrder` collection variable.
 
 ---
 
-#### `GET /orders/:orderId` — Get a Single Order
+#### `GET /orders/:orderId` — Get Single Order
 
 Returns details of a specific order.
 
@@ -310,15 +310,15 @@ Authorization: Bearer {{accessToken}}
 
 This request appears **three times** in the collection, each with a different test assertion:
 
-| Request Name                            | Purpose                                         |
-|-----------------------------------------|-------------------------------------------------|
-| Get an order — get your specified order | Verifies the order exists after creation        |
-| Get an order — verify name changed      | Confirms the customer name was updated          |
-| Get an order — verify order deleted     | Confirms the order returns `404` after deletion |
+| Request Name                            | Purpose                                                   |
+|-----------------------------------------|-----------------------------------------------------------|
+| Get an order — get your specified order | Verifies the order exists after creation                  |
+| Get an order — verify name changed      | Confirms the customer name was updated                    |
+| Get an order — verify order deleted     | Confirms the order returns `404 Not Found` after deletion |
 
 ---
 
-#### `PATCH /orders/:orderId` — Update an Order
+#### `PATCH /orders/:orderId` — Update Order
 
 Updates the customer name on an existing order with a new random name.
 
@@ -339,7 +339,7 @@ Content-Type: application/json
 
 ---
 
-#### `DELETE /orders/:orderId` — Delete an Order
+#### `DELETE /orders/:orderId` — Delete Order
 
 Permanently deletes an order.
 
@@ -351,13 +351,13 @@ Authorization: Bearer {{accessToken}}
 **Response:** `204 No Content`
 
 **Tests:** 
-- Asserts the response status is `204`.
+- Asserts the response status is `204 No Content`.
 
 ---
 
 ### API Clients
 
-#### `POST /api-clients` — Register an API Client
+#### `POST /api-clients` — Register API Client
 
 Registers a new client and returns an access token. Each email can only be registered once.
 
@@ -387,7 +387,12 @@ Content-Type: application/json
 }
 ```
 
-> This request is labelled **"client already registered"** in the collection — it is included to demonstrate the error response when re-registering with the same email.
+This request appears **twice** in the collection, each with a different test assertion:
+
+| Request Name               | Purpose                                                                                    |
+|----------------------------|--------------------------------------------------------------------------------------------|
+| Register API client        | Asserts the response status is `201 Created`, as a new user.                               |
+| Register API client        | Asserts the response status is `409 Conflict`, as the user that is already registered.     |
 
 ---
 
@@ -399,16 +404,17 @@ This is the primary workflow the collection is designed to demonstrate. Run all 
 
 ```
 1.  GET  /status                    → Verify API is online
-2.  GET  /books?type=non-fiction    → Find an available book (saves bookId)
-3.  GET  /books/:bookId             → Confirm book details
-4.  POST /orders                    → Place an order (saves orderId)
-5.  GET  /orders                    → Verify order appears in list
-6.  GET  /orders/:orderId           → Retrieve the specific order
-7.  PATCH /orders/:orderId          → Update the customer name
-8.  GET  /orders/:orderId           → Verify the name was updated
-9.  DELETE /orders/:orderId         → Delete the order
-10. GET  /orders/:orderId           → Verify the order is gone
-11. POST /api-clients               → Is not run as part of end-to-end workflow
+2.  POST /api-clients               → Registers new user
+3.  GET  /books?type=non-fiction    → Find an available book (saves bookId)
+4.  GET  /books/:bookId             → Confirm book details
+5.  POST /orders                    → Place an order (saves orderId)
+6.  GET  /orders                    → Verify order appears in list (saves customerName)
+7.  GET  /orders/:orderId           → Retrieve the specific order
+8.  PATCH /orders/:orderId          → Update the customer name
+9.  GET  /orders/:orderId           → Verify the name was updated
+10.  DELETE /orders/:orderId        → Delete the order
+11. GET  /orders/:orderId           → Verify the order is gone
+12. POST /api-clients               → Triggers "API client already registered" error
 ```
 
 ### Quick Book Browse (No Auth Required)
