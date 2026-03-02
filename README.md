@@ -52,17 +52,11 @@ https://simple-books-api.click
 
 ### 3. Register as an API Client
 
-Before placing orders, you must register as an API client to receive an **access token**. Send the **Register API Client** request (see [API Clients](#api-clients) below). The token returned should be stored in the `accessToken` collection variable.
-
-### 4. Set Your Customer Name
-
-Update the `customerName` collection variable with the name you want to use when placing orders.
-
----
+Before placing orders, you must register as an API client to receive an **access token**. Send the **Register API Client** request — (see [API Clients](#api-clients) below). The token returned should be stored in the `accessToken` collection variable.
 
 ## Authentication
 
-Most read operations (listing books, checking status) are **unauthenticated**. However, all **order management** endpoints require a Bearer token.
+Most read operations (checking status, listing books) are **unauthenticated**. However, all **order management** endpoints require a Bearer token.
 
 ### Obtaining a Token
 
@@ -91,10 +85,10 @@ Content-Type: application/json
 Include the token in the `Authorization` header for all order-related requests:
 
 ```http
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer Token {{accessToken}}
 ```
 
-> **Note:** Each email address can only be registered once. If you receive a `"API client already registered"` error, use a different email address or retrieve your existing token.
+> **Note:** Each email address can only be registered once. If you receive a `"API client already registered.  Try a different email."` error, use a different email address or retrieve your existing token.
 
 Store the token in the `accessToken` collection variable so all requests can reference it automatically via `{{accessToken}}`.
 
@@ -134,13 +128,14 @@ GET {{baseUrl}}/status
 }
 ```
 
-**Tests:** Asserts the response status code is `200 OK`.
+**Tests:** 
+- Asserts the response status code is `200 OK`.
 
 ---
 
 ### Books
 
-#### `GET /books?type=non-fiction` — List Books
+#### `GET /books` — List Books
 
 Returns a list of available books. Supports optional filtering by type.
 
@@ -150,31 +145,33 @@ GET {{baseUrl}}/books?type=non-fiction
 
 **Query Parameters:**
 
-| Parameter | Type   | Required | Description                          |
-|-----------|--------|----------|--------------------------------------|
+| Parameter | Type   | Required | Description                                |
+|-----------|--------|----------|--------------------------------------------|
 | `type`    | string | No       | Filter by type: `fiction` or `non-fiction` |
-| `limit`   | number | No       | Limit the number of results (1–20)   |
+| `limit`   | number | No       | Limit the number of results (1–20)         |
 
 **Response:**
 
 ```json
 [
-  {
-    "id": 1,
-    "name": "The Russian",
-    "type": "fiction",
-    "available": true
-  },
-  {
-    "id": 2,
-    "name": "Just as I Am",
-    "type": "non-fiction",
-    "available": true
-  }
+    {
+        "id": 2,
+        "name": "Just as I Am",
+        "type": "non-fiction",
+        "available": false
+    },
+    {
+        "id": 5,
+        "name": "Untamed",
+        "type": "non-fiction",
+        "available": true
+    }
 ]
 ```
 
-**Tests:** Finds the first available non-fiction book and saves its `id` to the `bookId` collection variable.
+**Tests:** 
+- Asserts the response status code is `200 OK`.
+- Finds the first available non-fiction book and saves its `id` to the `{{bookId}}` collection variable.
 
 ---
 
@@ -188,26 +185,34 @@ GET {{baseUrl}}/books/:bookId
 
 **Path Parameters:**
 
-| Parameter | Type   | Required | Description         |
-|-----------|--------|----------|---------------------|
-| `bookId`  | number | Yes      | The ID of the book  |
+| Parameter | Type     | Required | Description         |
+|-----------|----------|----------|---------------------|
+| `bookid`  | integer  | Yes      | The ID of the book  |
 
 **Response:**
 
 ```json
 {
-  "id": 2,
-  "name": "Just as I Am",
-  "author": "Billy Graham",
-  "isbn": "978-0061176210",
-  "type": "non-fiction",
-  "price": 10.99,
-  "current-stock": 12,
-  "available": true
+    "id": 5,
+    "entityType": "BOOK",
+    "available": true,
+    "timestamp": 1752239490804,
+    "created": "2025-07-11T13:11:30.804Z",
+    "GSI1SK": "BOOK#5",
+    "name": "Untamed",
+    "current-stock": 20,
+    "GSI1PK": "TYPE#non-fiction",
+    "price": 15.5,
+    "PK": "BOOK#5",
+    "author": "Glennon Doyle",
+    "type": "non-fiction",
+    "SK": "METADATA"
 }
 ```
 
-**Tests:** Verifies the returned book matches the `bookId` stored in the collection variable.
+**Tests:** 
+- Asserts the response status code is `200 OK`.
+- Verifies the returned available non-fiction book matches the `name` from the previous test.
 
 ---
 
@@ -217,7 +222,7 @@ GET {{baseUrl}}/books/:bookId
 
 #### `POST /orders` — Place an Order
 
-Creates a new book order.
+Creates a new book order under a random name.
 
 ```http
 POST {{baseUrl}}/orders
@@ -226,7 +231,7 @@ Content-Type: application/json
 
 {
   "bookId": {{bookId}},
-  "customerName": "{{customerName}}"
+  "customerName": "{{$randomFullName}}"
 }
 ```
 
@@ -239,13 +244,16 @@ Content-Type: application/json
 }
 ```
 
-**Tests:** Saves the returned `orderId` to the `orderId` collection variable.
+**Tests:** 
+- Asserts the response status code is `201 Created`.
+- Verifies that `created` is true.
+- Saves the returned `orderId` to the `{{orderId}}` collection variable.
 
 ---
 
 #### `GET /orders` — Get All Orders
 
-Returns a list of all orders placed by the authenticated client.
+Returns a list of all orders placed by an authenticated client.
 
 ```http
 GET {{baseUrl}}/orders
@@ -256,18 +264,20 @@ Authorization: Bearer {{accessToken}}
 
 ```json
 [
-  {
-    "id": "PF6MflPDcuhWobZcgmJy5",
-    "bookId": 2,
-    "customerName": "John Doe",
-    "createdBy": "client-id",
-    "quantity": 1,
-    "timestamp": 1636100000000
-  }
+    {
+        "id": "E-tHTTa4mZisAKyo-1q95",
+        "bookId": 5,
+        "customerName": "John doe",
+        "quantity": 1,
+        "timestamp": 1772464784992
+    }
 ]
 ```
 
-**Tests:** Verifies the recently placed order appears in the list.
+**Tests:** 
+- Asserts the response status code is `200 OK`.
+- Verifies the `orderID` of the recently placed order and that the `quantity` ordered was 1.
+- Adds the `customerName` from the order to the `{{customerOrder}}` collection variable.
 
 ---
 
@@ -293,7 +303,6 @@ Authorization: Bearer {{accessToken}}
   "id": "PF6MflPDcuhWobZcgmJy5",
   "bookId": 2,
   "customerName": "John Doe",
-  "createdBy": "client-id",
   "quantity": 1,
   "timestamp": 1636100000000
 }
@@ -301,17 +310,17 @@ Authorization: Bearer {{accessToken}}
 
 This request appears **three times** in the collection, each with a different test assertion:
 
-| Request Name                        | Purpose                                      |
-|-------------------------------------|----------------------------------------------|
-| Get an order — get your specified order | Verifies the order exists after creation     |
-| Get an order — verify name changed  | Confirms the customer name was updated       |
-| Get an order — verify order deleted | Confirms the order returns `404` after deletion |
+| Request Name                            | Purpose                                         |
+|-----------------------------------------|-------------------------------------------------|
+| Get an order — get your specified order | Verifies the order exists after creation        |
+| Get an order — verify name changed      | Confirms the customer name was updated          |
+| Get an order — verify order deleted     | Confirms the order returns `404` after deletion |
 
 ---
 
 #### `PATCH /orders/:orderId` — Update an Order
 
-Updates the customer name on an existing order.
+Updates the customer name on an existing order with a new random name.
 
 ```http
 PATCH {{baseUrl}}/orders/:orderId
@@ -325,7 +334,8 @@ Content-Type: application/json
 
 **Response:** `204 No Content` (no body returned on success)
 
-**Tests:** Asserts the response status is `204`.
+**Tests:** 
+- Asserts the response status is `204 No Content`.
 
 ---
 
@@ -340,7 +350,8 @@ Authorization: Bearer {{accessToken}}
 
 **Response:** `204 No Content`
 
-**Tests:** Asserts the response status is `204`.
+**Tests:** 
+- Asserts the response status is `204`.
 
 ---
 
@@ -396,8 +407,8 @@ This is the primary workflow the collection is designed to demonstrate. Run all 
 7.  PATCH /orders/:orderId          → Update the customer name
 8.  GET  /orders/:orderId           → Verify the name was updated
 9.  DELETE /orders/:orderId         → Delete the order
-10. GET  /orders/:orderId           → Verify the order is gone (expects 404)
-11. POST /api-clients               → Demonstrates "already registered" error
+10. GET  /orders/:orderId           → Verify the order is gone
+11. POST /api-clients               → Is not run as part of end-to-end workflow
 ```
 
 ### Quick Book Browse (No Auth Required)
@@ -445,5 +456,5 @@ Set up a Postman Monitor to run this collection on a schedule for continuous API
 ## Notes
 
 - The API is hosted on [Glitch](https://glitch.me) and may have a **cold start delay** of a few seconds if it hasn't been accessed recently.
-- The `bookId` and `orderId` variables are set automatically by test scripts — you do not need to set them manually when running the full workflow.
+- The `bookId`, `orderId`, and `customerName` variables are set automatically by test scripts — you do not need to set them manually when running the full workflow.
 - Orders are scoped to your `accessToken` — you can only view and manage orders created with your own token.
