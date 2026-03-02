@@ -362,6 +362,8 @@ Authorization: Bearer {{accessToken}}
 
 Registers a new client and returns an access token. Each email can only be registered once.
 
+The randomly generated email will be saved to `email` in collection variables and reused later.
+
 ```http
 POST {{baseUrl}}/api-clients
 Content-Type: application/json
