@@ -141,7 +141,7 @@ GET {{baseUrl}}/status
 Returns a list of available books. Supports optional filtering by type.
 
 ```http
-GET {{baseUrl}}/books?type=non-fiction
+GET {{baseUrl}}/books
 ```
 
 **Query Parameters:**
@@ -155,6 +155,30 @@ GET {{baseUrl}}/books?type=non-fiction
 
 ```json
 [
+    {
+        "id": 1,
+        "name": "The Russian",
+        "type": "fiction",
+        "available": true
+    },
+    {
+        "id": 3,
+        "name": "The Vanishing Half",
+        "type": "fiction",
+        "available": true
+    },
+    {
+        "id": 4,
+        "name": "The Midnight Library",
+        "type": "fiction",
+        "available": true
+    },
+    {
+        "id": 6,
+        "name": "Viscount Who Loved Me",
+        "type": "fiction",
+        "available": true
+    },
     {
         "id": 2,
         "name": "Just as I Am",
@@ -171,8 +195,13 @@ GET {{baseUrl}}/books?type=non-fiction
 ```
 
 **Tests:** 
-- Asserts the response status code is `200 OK`.
-- Finds the first available non-fiction book and saves its `id` to the `bookId` collection variable.
+- Certifies the response status code is `200 OK`.
+- Verifies the response time is under `500ms`.
+- Confirms the response body is JSON.
+- Checks the expected array objects are present.
+- Selects a random available fiction book.
+- Saves its `id` to the `bookId` collection variable.
+- Save its `name` to the `customerId` collection variable.
 
 ---
 
@@ -212,8 +241,11 @@ GET {{baseUrl}}/books/:bookId
 ```
 
 **Tests:** 
-- Asserts the response status code is `200 OK`.
-- Verifies the returned available non-fiction book has the correct `name`.
+- Certifies the response status code is `200 OK`.
+- Verifies the response time is under `500ms`.
+- Confirms the response body is JSON.
+- Checks the expected array objects are present.
+- Validates that your desired book is in stock.
 
 ---
 
@@ -246,8 +278,11 @@ Content-Type: application/json
 ```
 
 **Tests:** 
-- Asserts the response status code is `201 Created`.
-- Verifies that `created` is true.
+- Certifies the response status code is `201 Created`.
+- Verifies the response time is under `500ms`.
+- Confirms the response body is JSON.
+- Checks the expected array objects are present.
+- Verifies that the order was created.
 - Saves the returned `orderId` to the `orderId` collection variable.
 
 ---
@@ -276,8 +311,11 @@ Authorization: Bearer {{accessToken}}
 ```
 
 **Tests:** 
-- Asserts the response status code is `200 OK`.
-- Verifies the `orderID` of the recently placed order and that the `quantity` ordered was 1.
+- Certifies the response status code is `200 OK`.
+- Verifies the response time is under `500ms`.
+- Confirms the response body is JSON.
+- Checks the expected array objects are present.
+- Verifies that your order is present.
 - Adds the `customerName` from the order to the `customerOrder` collection variable.
 
 ---
@@ -336,7 +374,9 @@ Content-Type: application/json
 **Response:** `204 No Content` (no body returned on success)
 
 **Tests:** 
-- Asserts the response status is `204 No Content`.
+- Certifies the response status code is `200 OK`.
+- Verifies the response time is under `500ms`.
+- Confirms the response body is empty.
 
 ---
 
@@ -351,8 +391,12 @@ Authorization: Bearer {{accessToken}}
 
 **Response:** `204 No Content`
 
-**Tests:** 
-- Asserts the response status is `204 No Content`.
+This request appears **twice** in the collection, each with a different test assertion:
+
+| Request Name                            | Purpose                                                           |
+|-----------------------------------------|-------------------------------------------------------------------|
+| Get an order — get your specified order | Confirms the response body is empty on successful deletion        |
+| Get an order — verify name changed      | Confirms the correct error takes place on unsuccessful deletion   |
 
 ---
 
@@ -394,8 +438,8 @@ This request appears **twice** in the collection, each with a different test ass
 
 | Request Name               | Purpose                                                                                    |
 |----------------------------|--------------------------------------------------------------------------------------------|
-| Register API client        | Asserts the response status is `201 Created`, as a new user.                               |
-| Register API client        | Asserts the response status is `409 Conflict`, as the user that is already registered.     |
+| Register API client        | Checks the response status is `201 Created`, as a new user.                                |
+| Register API client        | Verifies the response status is `409 Conflict`, as the user that is already registered.    |
 
 ---
 
@@ -408,16 +452,17 @@ This is the primary workflow the collection is designed to demonstrate. Run all 
 ```
 1.  GET  /status                    → Verify API is online
 2.  POST /api-clients               → Registers new user
-3.  GET  /books?type=non-fiction    → Find an available book (saves bookId)
+3.  GET  /books                     → Find an available book
 4.  GET  /books/:bookId             → Confirm book details
-5.  POST /orders                    → Place an order (saves orderId)
-6.  GET  /orders                    → Verify order appears in list (saves customerName)
+5.  POST /orders                    → Place an order
+6.  GET  /orders                    → Verify order appears in list
 7.  GET  /orders/:orderId           → Retrieve the specific order
 8.  PATCH /orders/:orderId          → Update the customer name
 9.  GET  /orders/:orderId           → Verify the name was updated
-10.  DELETE /orders/:orderId        → Delete the order
+10. DELETE /orders/:orderId         → Delete the order
 11. GET  /orders/:orderId           → Verify the order is gone
-12. POST /api-clients               → Triggers "API client already registered" error
+12. DELETE /orders/:orderId         → Triggers "No order with id" error
+13. POST /api-clients               → Triggers "API client already registered" error
 ```
 
 ### Quick Book Browse (No Auth Required)
@@ -436,7 +481,7 @@ This is the primary workflow the collection is designed to demonstrate. Run all 
 
 1. Open the [Simple Books API](collection/17318486-9a7cbdad-23ba-4797-ae5c-59bbf3206fe7) collection in Postman
 2. Click **Run collection**
-3. Ensure all 11 requests are selected and in order
+3. Ensure all 13 requests are selected and in order
 4. Click **Run Simple Books API**
 
 ### Option 2: Postman CLI (CI/CD)
