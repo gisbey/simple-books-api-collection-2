@@ -201,7 +201,7 @@ GET {{baseUrl}}/books
 - Checks the expected array objects are present.
 - Selects a random available fiction book.
 - Saves its `id` to the `bookId` collection variable.
-- Save its `name` to the `customerId` collection variable.
+- Save its `name` to the `customerName` collection variable.
 
 ---
 
@@ -217,7 +217,7 @@ GET {{baseUrl}}/books/:bookId
 
 | Parameter | Type     | Required | Description         |
 |-----------|----------|----------|---------------------|
-| `bookid`  | integer  | Yes      | The ID of the book  |
+| `bookId`  | integer  | Yes      | The ID of the book  |
 
 **Response:**
 
@@ -349,11 +349,11 @@ Authorization: Bearer {{accessToken}}
 
 This request appears **three times** in the collection, each with a different test assertion:
 
-| Request Name                            | Purpose                                                   |
-|-----------------------------------------|-----------------------------------------------------------|
-| Get an order — get your specified order | Verifies the order exists after creation                  |
-| Get an order — verify name changed      | Confirms the customer name was updated                    |
-| Get an order — verify order deleted     | Confirms the order returns `404 Not Found` after deletion |
+| Request Name            | Purpose                                                     |
+|-------------------------|-------------------------------------------------------------|
+| Get Single Order        | Verifies the order exists after creation                    |
+| Get Single Order        | Confirms the customer name was updated                      |
+| Get Single Order        | Confirms the order returns `404 Not Found` after deletion   |
 
 ---
 
@@ -393,10 +393,10 @@ Authorization: Bearer {{accessToken}}
 
 This request appears **twice** in the collection, each with a different test assertion:
 
-| Request Name                            | Purpose                                                           |
-|-----------------------------------------|-------------------------------------------------------------------|
-| Get an order — get your specified order | Confirms the response body is empty on successful deletion        |
-| Get an order — verify name changed      | Confirms the correct error takes place on unsuccessful deletion   |
+| Request Name          | Purpose                                                     |
+|-----------------------|-------------------------------------------------------------|
+| Delete Order          | Confirms the response body is empty on `204 No Content`     |
+| Delete Order          | Confirms the correct error takes place on `404 Not Found`   |
 
 ---
 
