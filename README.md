@@ -1,4 +1,4 @@
-# Simple Books API — Postman Collection
+# Simple Books API – Postman Collection
 
 A complete Postman collection for testing and exploring the **Simple Books API** — a RESTful API for browsing books and managing orders. This collection doubles as both a reference guide and an end-to-end workflow test suite.
 
@@ -31,7 +31,7 @@ The **Simple Books API** allows clients to:
 
 **Base URL:** `https://simple-books-api.click`
 
-This collection is structured as an **end-to-end workflow** — requests are ordered to be run sequentially. Each request builds on the previous one, 
+This collection is structured as an **end-to-end workflow** – requests are ordered to be run sequentially. Each request builds on the previous one, 
 with test scripts that automatically capture values (e.g. `bookId`, `orderId`) into collection variables for use in subsequent requests.
 
 ---
@@ -105,7 +105,7 @@ Store the token in the `accessToken` collection variable so all requests can ref
 | `customerName` | Name of the customer placing the order (set automatically by tests)        | `John Doe`                             |
 | `email`        | Email used to register API client (set automatically by tests)             | `John.Doe@example.com`                 |
 
-> Variables marked as "set automatically by tests" are populated by the test scripts in earlier requests — no manual input needed when running the full collection in order.
+> Variables marked as "set automatically by tests" are populated by the test scripts in earlier requests – no manual input needed when running the full collection in order.
 
 ---
 
@@ -139,7 +139,7 @@ GET {{baseUrl}}/status
 
 ### Books
 
-#### `GET /books` — List Books
+#### `GET /books` – List Books
 
 Returns a list of available books. Supports optional filtering by type.
 
@@ -256,7 +256,7 @@ GET {{baseUrl}}/books/:bookId
 
 > ⚠️ All order endpoints require the `Authorization: Bearer {{accessToken}}` header.
 
-#### `POST /orders` — Place Order
+#### `POST /orders` – Place Order
 
 Creates a new book order under a random name.
 
@@ -323,7 +323,7 @@ Authorization: Bearer {{accessToken}}
 
 ---
 
-#### `GET /orders/:orderId` — Get Single Order
+#### `GET /orders/:orderId` – Get Single Order
 
 Returns details of a specific order.
 
@@ -383,7 +383,7 @@ Content-Type: application/json
 
 ---
 
-#### `DELETE /orders/:orderId` — Delete Order
+#### `DELETE /orders/:orderId` – Delete Order
 
 Permanently deletes an order.
 
@@ -513,5 +513,5 @@ Set up a Postman Monitor to run this collection on a schedule for continuous API
 ## Notes
 
 - The API is hosted on [Glitch](https://glitch.me) and may have a **cold start delay** of a few seconds if it hasn't been accessed recently.
-- The `bookId`, `orderId`, and `customerName` variables are set automatically by test scripts — you do not need to set them manually when running the full workflow.
+- The `bookId`, `orderId`, and `customerName` variables are set automatically by test scripts – you do not need to set them manually when running the full workflow.
 - Orders are scoped to your `accessToken` — you can only view and manage orders created with your own token.
