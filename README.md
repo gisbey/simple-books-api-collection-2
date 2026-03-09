@@ -1,6 +1,6 @@
 # Simple Books API – Postman Collection
 
-A complete Postman collection for testing and exploring the **Simple Books API** — a RESTful API for browsing books and managing orders. This collection doubles as both a reference guide and an end-to-end workflow test suite.
+A complete Postman collection for testing and exploring the **Simple Books API** – a RESTful API for browsing books and managing orders. This collection doubles as both a reference guide and an end-to-end workflow test suite.
 
 ---
 
@@ -52,7 +52,7 @@ https://simple-books-api.click
 
 ### 3. Register as an API Client
 
-Before placing orders, you must register as an API client to receive an **access token**. Send the **Register API Client** request — (see [API Clients](#api-clients) below). The token returned should be stored in the `accessToken` collection variable.
+Before placing orders, you must register as an API client to receive an **access token**. Send the **Register API Client** request – (see [API Clients](#api-clients) below). The token returned should be stored in the `accessToken` collection variable.
 
 ## Authentication
 
@@ -113,7 +113,7 @@ Store the token in the `accessToken` collection variable so all requests can ref
 
 ### Status
 
-#### `GET /status` — Check API Status
+#### `GET /status` – Check API Status
 
 Verifies the API is online and operational.
 
@@ -208,7 +208,7 @@ GET {{baseUrl}}/books
 
 ---
 
-#### `GET /books/:bookId` — Get Single Book
+#### `GET /books/:bookId` – Get Single Book
 
 Returns detailed information about a specific book.
 
@@ -290,7 +290,7 @@ Content-Type: application/json
 
 ---
 
-#### `GET /orders` — Get All Orders
+#### `GET /orders` – Get All Orders
 
 Returns a list of all orders placed by an authenticated client.
 
@@ -360,7 +360,7 @@ This request appears **three times** in the collection, each with a different te
 
 ---
 
-#### `PATCH /orders/:orderId` — Update Order
+#### `PATCH /orders/:orderId` – Update Order
 
 Updates the customer name on an existing order with a new random name.
 
@@ -405,7 +405,7 @@ This request appears **twice** in the collection, each with a different test ass
 
 ### API Clients
 
-#### `POST /api-clients` — Register API Client
+#### `POST /api-clients` – Register API Client
 
 Registers a new client and returns an access token. Each email can only be registered once.
 
@@ -514,4 +514,4 @@ Set up a Postman Monitor to run this collection on a schedule for continuous API
 
 - The API is hosted on [Glitch](https://glitch.me) and may have a **cold start delay** of a few seconds if it hasn't been accessed recently.
 - The `bookId`, `orderId`, and `customerName` variables are set automatically by test scripts – you do not need to set them manually when running the full workflow.
-- Orders are scoped to your `accessToken` — you can only view and manage orders created with your own token.
+- Orders are scoped to your `accessToken` – you can only view and manage orders created with your own token.
