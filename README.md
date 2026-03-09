@@ -226,19 +226,19 @@ GET {{baseUrl}}/books/:bookId
 
 ```json
 {
-    "id": 5,
+    "id": 4,
     "entityType": "BOOK",
     "available": true,
     "timestamp": 1752239490804,
     "created": "2025-07-11T13:11:30.804Z",
-    "GSI1SK": "BOOK#5",
-    "name": "Untamed",
-    "current-stock": 20,
-    "GSI1PK": "TYPE#non-fiction",
-    "price": 15.5,
-    "PK": "BOOK#5",
-    "author": "Glennon Doyle",
-    "type": "non-fiction",
+    "GSI1SK": "BOOK#4",
+    "name": "The Midnight Library",
+    "current-stock": 87,
+    "GSI1PK": "TYPE#fiction",
+    "price": 15.6,
+    "PK": "BOOK#4",
+    "author": "Matt Haig",
+    "type": "fiction",
     "SK": "METADATA"
 }
 ```
