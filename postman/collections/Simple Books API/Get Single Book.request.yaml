@@ -1,0 +1,308 @@
+$kind: http-request
+name: Get Single Book
+description: "Documentation available in Simple Books API repo README.md:
+  [https://github.com/gisbey/simple-books-api-collection/edit/main/README.md#ge\
+  t-booksbookid--get-single-book](https://github.com/gisbey/simple-books-api-co\
+  llection/edit/main/README.md#get-booksbookid--get-single-book)."
+url: "{{baseUrl}}:/books/:bookId"
+method: GET
+pathVariables:
+  bookId: "{{bookId}}"
+scripts:
+  - type: afterResponse
+    code: "//
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Config\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      const MAX_RESPONSE_TIME_MS = 500;\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // HTTP Status & Performance Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Status code is 200', () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(`HTTP: Response time < ${MAX_RESPONSE_TIME_MS}ms`, () => {\r
+
+      \    pm.expect(pm.response.responseTime, 'Response too slow')\r
+
+      \        .to.be.below(MAX_RESPONSE_TIME_MS);\r
+
+      });\r
+
+      \r
+
+      pm.test('HTTP: Content-Type is JSON', () => {\r
+
+      \    const contentType = pm.response.headers.get('Content-Type');\r
+
+      \    \r
+
+      \    pm.expect(contentType, 'Missing Content-Type header').to.exist;\r
+
+      \    \r
+
+      \    pm.expect(contentType.toLowerCase(), 'Content-Type must include
+      application/json')\r
+
+      \        .to.include('application/json');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Parse Response\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      let response;\r
+
+      \r
+
+      pm.test('Response is valid JSON', () => {\r
+
+      \    pm.expect(pm.response.text(), 'Response body must not be empty')\r
+
+      \        .to.not.be.empty;\r
+
+      \    \r
+
+      \    response = pm.response.json();\r
+
+      \    \r
+
+      \    pm.expect(response, 'Response root must be an object')\r
+
+      \        .to.be.an('object');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Response Body Validation\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Response fields are valid', () => {\r
+
+      \        pm.expect(response, 'ID must be a single-digit integer')\r
+
+      \            .to.have.property('id')\r
+
+      \            .that.is.a('number')\r
+
+      \            .to.be.within(0, 9);\r
+
+      \        \r
+
+      \        pm.expect(response, 'Entity Type must be \"BOOK\"')\r
+
+      \            .to.have.property('entityType')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.eql('BOOK');\r
+
+      \        \r
+
+      \        pm.expect(response, 'Available must be a boolean')\r
+
+      \            .to.have.property('available')\r
+
+      \            .that.is.a('boolean')\r
+
+      \        \r
+
+      \        pm.expect(response, 'Timestamp must be a 13-digit number')\r
+
+      \            .to.have.property('timestamp')\r
+
+      \            .that.is.a('number')\r
+
+      \            .and.satisfy(v => v.toString().length === 13);\r
+
+      \r
+
+      \        pm.expect(response, 'Created must be an ISO 8601 UTC
+      timestamp')\r
+
+      \            .to.have.property('created')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{\
+      3}Z$/)\r
+
+      \        \r
+
+      \        pm.expect(response, 'GSI1SK must be \"BOOK#<id>\"')\r
+
+      \            .to.have.property('GSI1SK')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.eql('BOOK#' + response.id)\r
+
+      \r
+
+      \        pm.expect(response, 'Name must contain only alphabetic characters
+      and space')\r
+
+      \            .to.have.property('name')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.match(/^[A-Za-z ]+$/);\r
+
+      \r
+
+      \        pm.expect(response, 'Current stock must be an number')\r
+
+      \            .to.have.property('current-stock')\r
+
+      \            .that.is.a('number')\r
+
+      \r
+
+      \        pm.expect(response, 'GSI1PK must \"TYPE#<type>\"')\r
+
+      \            .to.have.property('GSI1PK')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.eql('TYPE#' + response.type);\r
+
+      \        \r
+
+      \        pm.expect(response, 'Price must be a number')\r
+
+      \            .to.have.property('price')\r
+
+      \            .that.is.a('number')\r
+
+      \        \r
+
+      \        pm.expect(response, 'PK must be \"BOOK#<id>\"')\r
+
+      \            .to.have.property('PK')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.eql('BOOK#' + response.id);\r
+
+      \        \r
+
+      \        pm.expect(response, 'Author must contain only alphabetic
+      characters, spaces, and full stops')\r
+
+      \            .to.have.property('author')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.match(/^[A-Za-z. ]+$/);\r
+
+      \r
+
+      \        pm.expect(response, 'Type must contain only lowercase letters')\r
+
+      \            .to.have.property('type')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.match(/^[a-z]+$/);\r
+
+      \        \r
+
+      \        pm.expect(response, 'SK must be \"METADATA\"')\r
+
+      \            .to.have.property('SK')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.eql(\"METADATA\");\r
+
+      \    });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Business Logic Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test(\"Desired fiction book in stock\", () => {\r
+
+      \    pm.expect(response.id, 'Book ID must match bookId collection
+      variable')\r
+
+      \        .to.be.eql(pm.collectionVariables.get(\"bookId\"));\r
+
+      \    \r
+
+      \    pm.expect(response.name, 'Book name must match bookName collection
+      variable')\r
+
+      \        .to.be.eql(pm.collectionVariables.get(\"bookName\"));\r
+
+      \    \r
+
+      \    pm.expect(response.type, 'Book must be fiction')\r
+
+      \        .to.be.eql(\"fiction\")\r
+
+      \    \r
+
+      \    pm.expect(response[\"current-stock\"], 'Book must be in stock')\r
+
+      \        .to.be.above(0);\r
+
+      });\r\n"
+    language: text/javascript
+order: 4000

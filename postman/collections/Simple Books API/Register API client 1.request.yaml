@@ -1,0 +1,170 @@
+$kind: http-request
+name: Register API client
+description: "Documentation available in Simple Books API repo README.md:
+  [https://github.com/gisbey/simple-books-api-collection/blob/main/README.md#ap\
+  i-clients.](https://github.com/gisbey/simple-books-api-collection/blob/main/R\
+  EADME.md#api-clients)"
+url: "{{baseUrl}}/api-clients"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \   \"clientName\": \"Postman\",\r
+
+    \   \"clientEmail\": \"{{email}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "//
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Config\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      const MAX_RESPONSE_TIME_MS = 500;\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // HTTP Status & Performance Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Status code is 409', () => {\r
+
+      \    pm.response.to.have.status(409);\r
+
+      });\r
+
+      \r
+
+      pm.test(`HTTP: Response time < ${MAX_RESPONSE_TIME_MS}ms`, () => {\r
+
+      \    pm.expect(pm.response.responseTime, 'Response too slow')\r
+
+      \        .to.be.below(MAX_RESPONSE_TIME_MS);\r
+
+      });\r
+
+      \r
+
+      pm.test('HTTP: Content-Type is JSON', () => {\r
+
+      \    const contentType = pm.response.headers.get('Content-Type');\r
+
+      \    \r
+
+      \    pm.expect(contentType, 'Missing Content-Type header').to.exist;\r
+
+      \    \r
+
+      \    pm.expect(contentType.toLowerCase(), 'Content-Type must include
+      application/json')\r
+
+      \        .to.include('application/json');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Parse Response\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      let response;\r
+
+      \r
+
+      pm.test('Response is valid JSON', () => {\r
+
+      \    pm.expect(pm.response.text(), 'Response body must not be empty')\r
+
+      \        .to.not.be.empty;\r
+
+      \    \r
+
+      \    response = pm.response.json();\r
+
+      \    \r
+
+      \    pm.expect(response, 'Response root must be an object')\r
+
+      \        .to.be.an('object');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Response Body Validation\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test(\"Response fields are valid\", () => {\r
+
+      \    pm.expect(response, 'Error must contain only alphabetic characters,
+      spaces and full stops')\r
+
+      \        .to.have.property('error')\r
+
+      \        .that.is.a('string')\r
+
+      \        .to.match(/^[A-Za-z .]+$/);\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Business Logic Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test(\"Error message triggers when API client already registered\", ()
+      => {\r
+
+      \    pm.expect(response.error, 'Error message must match expected text')\r
+
+      \        .to.eql(\"API client already registered. Try a different
+      email.\");\r
+
+      });\r\n"
+    language: text/javascript
+order: 13000

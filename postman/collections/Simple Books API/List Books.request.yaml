@@ -1,0 +1,266 @@
+$kind: http-request
+name: List Books
+description: "Documentation available in Simple Books API repo README.md:
+  [https://github.com/gisbey/simple-books-api-collection/edit/main/README.md#ge\
+  t-books--list-books.](https://github.com/gisbey/simple-books-api-collection/e\
+  dit/main/README.md#get-books--list-books)"
+url: "{{baseUrl}}:/books"
+method: GET
+queryParams:
+  - key: type
+    value: non-fiction
+    disabled: true
+scripts:
+  - type: afterResponse
+    code: "//
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Config\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      const MAX_RESPONSE_TIME_MS = 500;\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // HTTP Status & Performance Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Status code is 200', () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(`HTTP: Response time < ${MAX_RESPONSE_TIME_MS}ms`, () => {\r
+
+      \    pm.expect(pm.response.responseTime, 'Response too slow')\r
+
+      \        .to.be.below(MAX_RESPONSE_TIME_MS);\r
+
+      });\r
+
+      \r
+
+      pm.test('HTTP: Content-Type is JSON', () => {\r
+
+      \    const contentType = pm.response.headers.get('Content-Type');\r
+
+      \    \r
+
+      \    pm.expect(contentType, 'Missing Content-Type header').to.exist;\r
+
+      \    \r
+
+      \    pm.expect(contentType.toLowerCase(), 'Content-Type must include
+      application/json')\r
+
+      \        .to.include('application/json');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Parse Response\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      let response;\r
+
+      \r
+
+      pm.test('Response is valid JSON', () => {\r
+
+      \    pm.expect(pm.response.text(), 'Response body must not be empty')\r
+
+      \        .to.not.be.empty;\r
+
+      \    \r
+
+      \    response = pm.response.json();\r
+
+      \    \r
+
+      \    pm.expect(response, 'Response root must be an array')\r
+
+      \        .to.be.an('array');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Response Body Validation\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Each book object contains valid fields', () => {\r
+
+      \    response.forEach((book) => {\r
+
+      \r
+
+      \        pm.expect(book, `Book must be an object`)\r
+
+      \            .to.be.an(\"object\");\r
+
+      \r
+
+      \        pm.expect(book, 'ID must be a single-digit integer')\r
+
+      \            .to.have.property('id')\r
+
+      \            .that.is.a('number')\r
+
+      \            .to.be.within(0, 9);\r
+
+      \r
+
+      \        pm.expect(book, 'Name must contain only letters & spaces')\r
+
+      \            .to.have.property('name')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.match(/^[A-Za-z ]+$/);\r
+
+      \r
+
+      \        pm.expect(book, 'Type must be lowercase (letters/hyphens)')\r
+
+      \            .to.have.property('type')\r
+
+      \            .that.is.a('string')\r
+
+      \            .to.match(/^[a-z-]+$/);\r
+
+      \r
+
+      \        pm.expect(book, 'Available must be a boolean value')\r
+
+      \            .to.have.property('available')\r
+
+      \            .that.is.a('boolean');\r
+
+      \    });\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Random Avilable Fiction Book Selection\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      // Filter for available fiction books\r
+
+      const availableFictionBook = response.filter((book) => \r
+
+      \    book.type === \"fiction\" && \r
+
+      \    book.available === true);\r
+
+      \r
+
+      //Select random fiction book from the filtered list\r
+
+      const book = availableFictionBook\r
+
+      \    [Math.floor(Math.random() * availableFictionBook.length)];\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Business Logic Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test(\"Random available fiction book valid\", () => {\r
+
+      \    pm.expect(book, 'Book must be an object')\r
+
+      \        .to.be.an('object');\r
+
+      \    \r
+
+      \    pm.expect(book.type, 'Book Type must be fiction')\r
+
+      \        .to.eql(\"fiction\");\r
+
+      \    \r
+
+      \    pm.expect(book.available, 'Book must be available')\r
+
+      \        .to.eql(true);\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Export Variables\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      if (book) {\r
+
+      \    pm.collectionVariables.set(\"bookId\", book.id);\r
+
+      \    pm.collectionVariables.set(\"bookName\", book.name);\r
+
+      }\r\n"
+    language: text/javascript
+order: 3000

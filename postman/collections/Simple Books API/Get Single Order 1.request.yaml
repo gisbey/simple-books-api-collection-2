@@ -1,0 +1,229 @@
+$kind: http-request
+name: Get Single Order
+description: "Documentation available in Simple Books API repo README.md:
+  [https://github.com/gisbey/simple-books-api-collection/edit/main/README.md#ge\
+  t-ordersorderid--get-single-order.](https://github.com/gisbey/simple-books-ap\
+  i-collection/edit/main/README.md#get-ordersorderid--get-single-order)"
+url: "{{baseUrl}}:/orders/:orderId"
+method: GET
+pathVariables:
+  orderId: "{{orderId}}"
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{accessToken}}"
+scripts:
+  - type: afterResponse
+    code: "//
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Config\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      const MAX_RESPONSE_TIME_MS = 500;\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // HTTP Status & Performance Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Status code is 200', () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(`HTTP: Response time < ${MAX_RESPONSE_TIME_MS}ms`, () => {\r
+
+      \    pm.expect(pm.response.responseTime, 'Response too slow')\r
+
+      \        .to.be.below(MAX_RESPONSE_TIME_MS);\r
+
+      });\r
+
+      \r
+
+      pm.test('HTTP: Content-Type is JSON', () => {\r
+
+      \    const contentType = pm.response.headers.get('Content-Type');\r
+
+      \    \r
+
+      \    pm.expect(contentType, 'Missing Content-Type header').to.exist;\r
+
+      \    \r
+
+      \    pm.expect(contentType.toLowerCase(), 'Content-Type must include
+      application/json')\r
+
+      \        .to.include('application/json');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Parse Response\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      let response;\r
+
+      \r
+
+      pm.test('Response is valid JSON', () => {\r
+
+      \    pm.expect(pm.response.text(), 'Response body must not be empty')\r
+
+      \        .to.not.be.empty;\r
+
+      \    \r
+
+      \    response = pm.response.json();\r
+
+      \    \r
+
+      \    pm.expect(response, 'Response root must be an object')\r
+
+      \        .to.be.an('object');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Response Body Validation\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test(\"Response fields are valid\", () => {\r
+
+      \    pm.expect(response, 'Order ID must be 21 chars: alphanumeric,
+      hyphens, underscores')\r
+
+      \        .to.have.property('id')\r
+
+      \        .that.is.a('string')\r
+
+      \        .to.match(/^[A-Za-z0-9-_]{21}$/);\r
+
+      \r
+
+      \    pm.expect(response, 'Book ID must be a single-digit integer')\r
+
+      \        .to.have.property('bookId')\r
+
+      \        .that.is.a('number')\r
+
+      \        .to.be.within(0, 9);\r
+
+      \        \r
+
+      \    pm.expect(response ,'Author must contain only alphabetic characters,
+      spaces, and full stops')\r
+
+      \        .to.have.property('customerName')\r
+
+      \        .that.is.a('string')\r
+
+      \        .to.match(/^[A-Za-z. ]+$/);\r
+
+      \r
+
+      \    pm.expect(response, 'Quantity must be a number.')\r
+
+      \        .to.have.property('quantity')\r
+
+      \        .that.is.a('number');\r
+
+      \        \r
+
+      \    pm.expect(response, 'Timestamp must be a 13-digit number.')\r
+
+      \        .to.have.property('timestamp')\r
+
+      \        .that.is.a('number')\r
+
+      \        .and.satisfy(v => v.toString().length === 13);\r
+
+      \    });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Business Logic Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test(\"Order details remain correct, but customer name has changed\",
+      () => {\r
+
+      \    pm.expect(response.id, 'Order ID must match \"orderId\" collection
+      variable')\r
+
+      \        .to.be.eql(pm.collectionVariables.get(\"orderId\"));\r
+
+      \    \r
+
+      \    pm.expect(response.bookId, 'Book ID must match \"bookId\" collection
+      variable')\r
+
+      \        .to.be.eql(parseInt(pm.collectionVariables.get(\"bookId\")));\r
+
+      \    \r
+
+      \    pm.expect(response.customerName, 'Customer name must not match
+      \"customerName\" collection variable')\r
+
+      \        .to.not.eql(pm.collectionVariables.get(\"customerName\"));\r
+
+      \    \r
+
+      \    pm.expect(response.quantity, 'Quantity should equal 1')\r
+
+      \        .to.eql(1);\r
+
+      });\r\n"
+    language: text/javascript
+order: 9000

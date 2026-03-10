@@ -1,0 +1,13 @@
+$kind: collection
+description: A complete Postman collection for testing and exploring the
+  **Simple Books API** — a RESTful API for browsing books and managing orders.
+  This collection doubles as both a reference guide and an end-to-end workflow
+  test suite.
+variables:
+  baseUrl: https://simple-books-api.click
+  accessToken: dce40f252f63c59c2ec12eda6e9cf48a309228d629e8984f26e91a418c69523f
+  bookId: ""
+  bookName: ""
+  orderId: ""
+  customerName: ""
+  email: ""

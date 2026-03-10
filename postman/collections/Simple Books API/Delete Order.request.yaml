@@ -1,0 +1,88 @@
+$kind: http-request
+name: Delete Order
+description: "Documentation available in Simple Books API repo README.md:
+  [https://github.com/gisbey/simple-books-api-collection/blob/main/README.md#de\
+  lete-ordersorderid--delete-order](https://github.com/gisbey/simple-books-api-\
+  collection/blob/main/README.md#delete-ordersorderid--delete-order)."
+url: "{{baseUrl}}:/orders/:orderId"
+method: DELETE
+pathVariables:
+  orderId: "{{orderId}}"
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{accessToken}}"
+scripts:
+  - type: afterResponse
+    code: "//
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Config\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      const MAX_RESPONSE_TIME_MS = 500;\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // HTTP Status & Performance Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Status code is 204', () => {\r
+
+      \    pm.response.to.have.status(204);\r
+
+      });\r
+
+      \r
+
+      pm.test(`HTTP: Response time < ${MAX_RESPONSE_TIME_MS}ms`, () => {\r
+
+      \    pm.expect(pm.response.responseTime, 'Response too slow')\r
+
+      \        .to.be.below(MAX_RESPONSE_TIME_MS);\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Parse Response\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      let response;\r
+
+      \r
+
+      pm.test(\"Response body is empty\", function () {\r
+
+      \    pm.expect(pm.response.text()).to.be.empty;\r
+
+      });\r\n"
+    language: text/javascript
+order: 10000

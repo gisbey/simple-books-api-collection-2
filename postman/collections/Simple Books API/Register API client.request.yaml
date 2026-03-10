@@ -1,0 +1,162 @@
+$kind: http-request
+name: Register API client
+description: "Documentation available in Simple Books API repo README.md:
+  [https://github.com/gisbey/simple-books-api-collection/blob/main/README.md#ap\
+  i-clients](https://github.com/gisbey/simple-books-api-collection/blob/main/RE\
+  ADME.md#api-clients)."
+url: "{{baseUrl}}/api-clients"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \   \"clientName\": \"Postman\",\r
+
+    \   \"clientEmail\": \"{{email}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "//
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Config\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      const MAX_RESPONSE_TIME_MS = 500;\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // HTTP Status & Performance Tests\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Status code is 201', () => {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(`HTTP: Response time < ${MAX_RESPONSE_TIME_MS}ms`, () => {\r
+
+      \    pm.expect(pm.response.responseTime, 'Response too slow')\r
+
+      \        .to.be.below(MAX_RESPONSE_TIME_MS);\r
+
+      });\r
+
+      \r
+
+      pm.test('HTTP: Content-Type is JSON', () => {\r
+
+      \    const contentType = pm.response.headers.get('Content-Type');\r
+
+      \    pm.expect(contentType, 'Missing Content-Type header').to.exist;\r
+
+      \    \r
+
+      \    pm.expect(contentType.toLowerCase(), 'Content-Type must include
+      application/json')\r
+
+      \        .to.include('application/json');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Parse Response\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      let response;\r
+
+      \r
+
+      pm.test('Response is valid JSON', () => {\r
+
+      \    pm.expect(pm.response.text(), 'Response body must not be empty')\r
+
+      \        .to.not.be.empty;\r
+
+      \    \r
+
+      \    response = pm.response.json();\r
+
+      \    \r
+
+      \    pm.expect(response, 'Response root must be an object')\r
+
+      \        .to.be.an('object');\r
+
+      });\r
+
+      \r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Response Body Validation\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.test('Valid access token is generated', () => {\r
+
+      \    pm.expect(response, 'Response must include accessToken')\r
+
+      \        .to.have.property('accessToken');\r
+
+      \r
+
+      \    pm.expect(/^[a-f0-9]{64}$/i.test(response.accessToken),\r
+
+      \        'accessToken must be a 64-character hexadecimal string (0-9,
+      a-f)')\r
+
+      \        .to.be.true;\r
+
+      });\r\n"
+    language: text/javascript
+  - type: beforeRequest
+    code: "//
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      // Random Email Generation\r
+
+      //
+      ─────────────────────────────────────────────────────────────────────────\
+      ────\r
+
+      \r
+
+      pm.collectionVariables.set(\"email\",
+      pm.variables.replaceIn(\"{{$randomEmail}}\"));\r\n"
+    language: text/javascript
+order: 2000

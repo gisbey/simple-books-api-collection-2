@@ -1,0 +1,12 @@
+# Use this workspace to collaborate
+workspace:
+  id: 893a4f48-b459-4a00-b115-e1b7b86469ed
+
+localResources:
+  collections:
+    - ..\Simple Books API.postman_collection.json
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+cloudResources:
+  collections:
+    ..\postman\collections\Simple Books API: 17318486-326d687c-2102-4d20-8110-1fe2ba07edeb
