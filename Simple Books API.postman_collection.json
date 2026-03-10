@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "9a7cbdad-23ba-4797-ae5c-59bbf3206fe7",
+    "_postman_id": "2a834851-c0e5-474e-8c2a-06c6d09049c7",
     "name": "Simple Books API",
     "description": "A complete Postman collection for testing and exploring the **Simple Books API** — a RESTful API for browsing books and managing orders. This collection doubles as both a reference guide and an end-to-end workflow test suite.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -178,7 +178,12 @@
           "listen": "prerequest",
           "script": {
             "exec": [
-              "pm.collectionVariables.set(\"email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));"
+              "// ─────────────────────────────────────────────────────────────────────────────\r",
+              "// Random Email Generation\r",
+              "// ─────────────────────────────────────────────────────────────────────────────\r",
+              "\r",
+              "pm.collectionVariables.set(\"email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));\r",
+              ""
             ],
             "type": "text/javascript",
             "packages": {},
