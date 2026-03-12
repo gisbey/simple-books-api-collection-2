@@ -506,7 +506,7 @@ curl -o- "https://dl-cli.pstmn.io/install.sh" | sh
 postman login --with-api-key YOUR_POSTMAN_API_KEY
 
 # Run the collection
-postman collection run 2a834851-c0e5-474e-8c2a-06c6d09049c7
+postman collection run 17318486-52f1c847-da9f-4423-9c78-640fa2cdeed8
 ```
 
 ### Option 3: Scheduled Monitor
@@ -524,3 +524,4 @@ Set up a Postman Monitor to run this collection on a schedule for continuous API
 - The API is hosted on [Glitch](https://glitch.me) and may have a **cold start delay** of a few seconds if it hasn't been accessed recently.
 - The `bookId`, `orderId`, and `customerName` variables are set automatically by test scripts – you do not need to set them manually when running the full workflow.
 - Orders are scoped to your `accessToken` – you can only view and manage orders created with your own token.
+
