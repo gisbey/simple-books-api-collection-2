@@ -1,6 +1,10 @@
 
 name: Automated API tests using Postman CLI
 
+######################################################################
+      # COLLECTION RUNS ON PUSH AND DAILY AT 07:00
+######################################################################
+
 on:
   push:
   schedule:
@@ -9,6 +13,10 @@ on:
 jobs:
   automated-api-tests:
     runs-on: ubuntu-latest
+
+######################################################################
+      # INSTALL AND LOGIN TO POSTMAN CLI + RUN AND UPLOAD TESTS
+######################################################################
 
     steps:
       - uses: actions/checkout@v4
