@@ -1,17 +1,67 @@
+
 name: Automated API tests using Postman CLI
 
-on: push
+on:
+  push:
+  schedule:
+    - cron: "0 7 * * *"   # daily at 07:00 UTC
 
 jobs:
   automated-api-tests:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Install Postman CLI
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
       - name: Run API tests
+        id: postman
         run: |
-          postman collection run "17318486-52f1c847-da9f-4423-9c78-640fa2cdeed8" --iteration-count 5
+          postman collection run "17318486-52f1c847-da9f-4423-9c78-640fa2cdeed8" \
+            --iteration-count 5 \
+            --reporters cli,json \
+            --reporter-json-export test-results.json
+
+      - name: Upload test results artifact (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-test-results
+          path: test-results.json
+
+      ######################################################################
+      # EMAIL ONLY IF TESTS FAIL + ATTACH RESULTS
+      ######################################################################
+      - name: Send failure email with test results
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+
+          from: "API Test Bot <${{ secrets.MAIL_USERNAME }}>"
+          to: ${{ secrets.MAIL_TO }}
+
+          subject: "❌ API Test Failure in ${{ github.repository }}"
+          body: |
+            The Postman API test run has FAILED.
+
+            Repository:  ${{ github.repository }}
+            Workflow:    ${{ github.workflow }}
+            Branch:      ${{ github.ref }}
+            Commit:      ${{ github.sha }}
+            Run Number:  ${{ github.run_number }}
+
+            The full test results are attached as test-results.json.
+
+          attachments: test-results.json
