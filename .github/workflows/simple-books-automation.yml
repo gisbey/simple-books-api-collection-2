@@ -46,6 +46,7 @@ jobs:
       ######################################################################
       # EMAIL ONLY IF TESTS FAIL + ATTACH RESULTS
       ######################################################################
+      
       - name: Send failure email with test results
         if: failure()
         uses: dawidd6/action-send-mail@v3
