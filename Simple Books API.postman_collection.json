@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "745f01ae-036b-4e6c-bbf6-5b4b3dd69f63",
     "name": "Simple Books API",
-    "description": "A complete Postman collection for testing and exploring the **Simple Books API** - a RESTful API for browsing books and managing orders. This collection doubles as both a reference guide and an end-to-end workflow test suite.",
+    "description": "A complete Postman collection for testing and exploring the **Simple Books API** - a RESTful API for browsing books and managing orders. This collection demonstrates a user journey through the workflow and is intended to showcase Postman proficiency, rather than serve as a comprehensive test suite.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "17318486"
   },
